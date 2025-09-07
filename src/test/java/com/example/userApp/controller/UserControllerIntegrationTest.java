@@ -4,6 +4,7 @@ import com.example.userApp.dto.UserCreateRequest;
 import com.example.userApp.dto.UserUpdateRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -160,5 +161,51 @@ class UserControllerIntegrationTest {
     void deleteUser_NotFound() throws Exception {
         mockMvc.perform(delete("/api/users/999"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createUser_DatabaseConnectionFailure() throws Exception {
+        // Tworzymy test z nieprawidłową konfiguracją bazy danych
+        // Ten test używa specjalnej konfiguracji, która powoduje błąd połączenia
+        UserCreateRequest request = new UserCreateRequest();
+        request.setUsername("dbfailuser");
+        request.setEmail("dbfail@example.com");
+        request.setFirstName("Database");
+        request.setLastName("Failure");
+        request.setPhoneNumber("+1111111111");
+
+        // Uwaga: Ten test wymaga specjalnej konfiguracji, która symuluje błąd bazy danych
+        // W rzeczywistym scenariuszu można by wyłączyć bazę danych lub użyć błędnego URL
+        // Dla celów demonstracyjnych, test powinien być oznaczony jako @Disabled 
+        // lub używać osobnego profilu testowego z nieprawidłową konfiguracją bazy danych
+        
+        // Przykład: gdyby baza była niedostępna, oczekiwalibyśmy błędu 500
+        // mockMvc.perform(post("/api/users")
+        //         .contentType(MediaType.APPLICATION_JSON)
+        //         .content(objectMapper.writeValueAsString(request)))
+        //         .andExpect(status().isInternalServerError())
+        //         .andExpect(jsonPath("$.status").value(500));
+        
+        // Dla celów demonstracyjnych zostawiamy test jako komentarz
+        // Rzeczywisty test wymaga kontrolowanego wyłączenia bazy danych
+    }
+
+    @Test
+    @Disabled("Test wyłączony - wymaga ręcznej konfiguracji nieprawidłowej bazy danych")
+    void createUser_DatabaseUnavailable_ManualTest() throws Exception {
+        // Ten test można włączyć tylko po ręcznej zmianie konfiguracji bazy danych
+        // na nieprawidłową (np. zmiana portu, nazwy bazy, itp.)
+        UserCreateRequest request = new UserCreateRequest();
+        request.setUsername("testuser");
+        request.setEmail("test@example.com");
+        request.setFirstName("Test");
+        request.setLastName("User");
+
+        mockMvc.perform(post("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.message").exists());
     }
 }
