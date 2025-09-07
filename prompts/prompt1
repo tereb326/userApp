@@ -1,0 +1,3 @@
+Wygeneruj aplikację w języku Java do zarządzania użytkownikami,
+opartej na Spring Boot, udostępniającej interfejs RESTful API
+do obsługi podstawowych operacji CRUD na zasobach bazy danych h2 (in-memmory)
